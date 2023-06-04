@@ -1,0 +1,108 @@
+<template>
+    <!-- Content area -->
+    <div class="flex flex-col flex-1">
+        <main>
+            <div class="px-4 sm:px-6 py-8 w-full max-w-9xl mx-auto">
+                <h1 class="font-bold text-4xl pb-2 text-black">TRANSACCIONES</h1>
+                <!-- Page header -->
+                <div class="sm:flex sm:justify-between sm:items-center mb-4 md:mb-2">
+                    <!-- Left: Title -->
+                    <div class="mb-4 sm:mb-0">
+
+                    </div>
+
+                    <!-- Right: Actions  -->
+                    <div class="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
+
+                        <!-- Delete button -->
+
+
+                        <!-- Search form -->
+                        <div class="hidden sm:block">
+                            <SearchForm class="hidden sm:block" />
+                        </div>
+                        <Dropdown align="right" width="48">
+                            <template #trigger>
+                                <span class="inline-flex rounded-md">
+                                    <Boton type="button"
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md focus:outline-none transition ease-in-out duration-150">
+                                        EXPORTAR
+
+                                        <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </Boton>
+                                </span>
+                            </template>
+                            <template #content>
+                                <DropdownLink @click="exportarPDF">PDF</DropdownLink>
+                                <DropdownLink @click="exportarExcel">
+                                    Excel
+                                </DropdownLink>
+                            </template>
+                        </Dropdown>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <span>Transacciones desde mi </span>
+                    <DropdownTransaction />
+                </div>
+                <!-- Table -->
+                <div>
+                    <TransaccionesTodos></TransaccionesTodos>
+                </div>
+                <!-- Pagination -->
+                <div class="mt-8">
+                    <PaginationClassic />
+                </div>
+            </div>
+        </main>
+
+    </div>
+</template>
+
+<script setup>
+
+import DropdownTransaction from '../../../Components/mosaic/components/DropdownTransaction.vue';
+import SearchForm from '../../../Components/mosaic/components/SearchForm.vue';
+
+import PaginationClassic from '../../../Components/mosaic/components/PaginationClassic.vue';
+import Dropdown from '../../Dropdown.vue';
+import DropdownLink from '../../DropdownLink.vue';
+import Boton from '../Boton.vue';
+import TransaccionesTodos from './TransaccionesTodos.vue';
+</script>
+<script>
+import axios from 'axios';
+
+export default {
+    data() {
+        return {
+            sumaTotal: null
+        };
+    },
+    created() {
+        this.obtenerSumaTotalIngresos();
+    },
+    methods: {
+        obtenerSumaTotalIngresos() {
+            axios.get('/total-ingresos-json')
+                .then(response => {
+                    this.sumaTotal = response.data.suma_total;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        exportarPDF() {
+            window.open('/ingresos-pdf', '_blank');
+        },
+        exportarExcel() {
+            window.open('/ingresos-excel', '_blank');
+        }
+    }
+};
+</script>
